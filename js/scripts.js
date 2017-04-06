@@ -1,8 +1,10 @@
 // business logic
 var hoursArray = [];
 var tipsArray = [];
+var employeeArray = [];
 var newEmployee;
-var inputtedTips;
+var inputtedTips = 800;
+var hourSum;
 
 function add(a, b) {
   return a + b;
@@ -23,15 +25,21 @@ Employee.prototype.fullInfo = function() {
   return this.employeeName + ", " + this.hours;
 };
 
-Employee.prototype.tipMath = function() {
-  var hourSum = hoursArray.reduce(add, 0);
-  var tipPerHour = hourSum/inputtedTips;
+Employee.prototype.employeeList = function() {
+  employeeArray.push(newEmployee);
+}
+
+var tipMath = function() {
+  var tipPerHour = inputtedTips / hourSum;
   hoursArray.forEach(function(hour) {
     var individualTips = tipPerHour * hour;
+    hour += individualTips;
+    // console.log(individualTips);
     tipsArray.push(individualTips);
-    return tipsArray;
   });
+  return tipsArray;
 };
+
 
 // front end logic
 $(function() {
@@ -39,10 +47,10 @@ $(function() {
   $("#additional-employee").click(function() {
     var inputtedName = $("#employee-name").val();
     var inputtedHours = parseInt($("#employee-hours").val());
-    inputtedTips = parseInt($("#total-tips").val());
 
     newEmployee = new Employee(inputtedName, inputtedHours);
-    console.log(newEmployee);
+
+    newEmployee.employeeList();
 
     $("ul#employee-list").append("<li>" + newEmployee.fullInfo() + "</li>");
 
@@ -50,6 +58,7 @@ $(function() {
     $("#employee-hours").val("");
 
     newEmployee.totalHours();
+
   });
 
   $("#all-employees").click(function() {
@@ -64,11 +73,19 @@ $(function() {
   $("form").submit(function(event) {
     event.preventDefault();
 
+    hourSum = hoursArray.reduce(add, 0);
+    // console.log(hourSum);
 
-    newEmployee.tipMath();
+    var result = tipMath(employeeArray);
 
+    result.forEach(function(tip) {
+      return $("ul#employee-tipout").append("<li>" + tip + "</li>");
+    })
 
-    console.log(tipsArray);
+    // console.log(newEmployee);
+    // console.log(hoursArray);
+    // console.log(employeeArray);
+    console.log(result);
     // console.log(newEmployee.tips);
   });
 });
